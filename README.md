@@ -19,11 +19,52 @@
 
 ## infrostructure
 
-![инфроструктура](images/infrastructure.png)
-
+┌──────────────────────────────────────────────┐
+│                Docker Compose                │
+└──────────────────────────────────────────────┘
+        │
+        ▼
+┌──────────────────────────────────────────────┐
+│                  Docker                      │
+│                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
+│  │ Services │  │ Postgres │  │  Redis   │    │
+│  └──────────┘  └──────────┘  └-----------    |
+┌──────────────────────────────────────────────
 ## Архитектура
 
-![архитектура](images/arhitecture.png)
+                ┌───────────────────────────┐
+                │        API Gateway        │
+                │   JWT Auth / Routing      │
+                └───────────▲───────┬───────┘
+                            │ HTTP  │
+        ┌───────────────────┘       └───────────────────┐
+        │                                               │
+┌───────┴────────┐   ┌────────────────┐   ┌─────────────┴───────--─┐
+│  User Service  │   │ Event Service  │   │     Ticket Service     │
+│────────────────│   │────────────────│   │────────────────────────│
+│ - Auth         │   │ - Events       │   │ - Ticket Purchase      │
+│ - Profiles     │   │ - Limits       │   │ - QR Codes             │
+│ - JWT Issuer   │   │                │   │                        │
+└───────┬────────┘   └───────┬────────┘   └──────────┬─────────────┘
+        │                    │                        │
+        ▼                    ▼                        ▼
+  Users DB              Events DB                Tickets DB
+ (PostgreSQL)          (PostgreSQL)             (PostgreSQL)
+                                                       │
+                                                       │ Kafka event
+                                                       │ `ticket.purchased`
+                                                       ▼
+                                              ┌──────────────────────┐
+                                              │ Notification Service  │
+                                              │──────────────────────│
+                                              │ - Kafka Consumer     │
+                                              │ - Send Alerts        │
+                                              └─────────┬────────────┘
+                                                        ▼
+                                               Notifications DB
+                                                (PostgreSQL)
+
 
 ### Инфраструктура и инструменты
 - **Docker & Docker Compose** — Контейнеризация и оркестрация
@@ -141,33 +182,6 @@ go run ./cmd/app
 cd gateway
 go run .
 ```
-
-### Полезные команды
-
-```bash
-# Запуск всех тестов
-make test
-
-# Проверка качества кода
-make lint
-
-# Форматирование кода
-make fmt
-
-# Проверка типов
-make vet
-
-# Обновление зависимостей
-make tidy
-
-# Остановка всех сервисов
-docker-compose down
-
-# Просмотр логов сервиса
-docker-compose logs -f <service-name>
-```
-
----
 
 ### Обзор архитектуры
 
