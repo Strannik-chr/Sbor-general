@@ -1,0 +1,22 @@
+package models
+
+import "time"
+
+type UserRole string
+
+const (
+	RoleUser      UserRole = "user"
+	RoleOrganizer UserRole = "organizer"
+)
+
+type User struct {
+	ID           uint   `gorm:"primaryKey"`
+	Email        string `gorm:"uniqueIndex;not null"`
+	PasswordHash string `gorm:"not null"`
+	FirstName    string
+	LastName     string
+	Role         UserRole `gorm:"type:varchar(20);not null;default:'user'"`
+	IsActive     bool     `gorm:"not null;default:true"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
