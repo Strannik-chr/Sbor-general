@@ -16,18 +16,14 @@
 - **Redis** — Кеширование и хранение настроек уведомлений
 - **JWT (JSON Web Tokens)** — Аутентификация и авторизация
 
-###Aрхитектура
 
--Postman
-   ↓
--Gateway (:8000)
-   ↓
-------------------------------
--| user-service (8081)
--| event-service (8083)
--| ticket-service (8082)
--| notification-service (8084)
-------------------------------
+## infrostructure
+
+![инфроструктура](images/infrastructure.png)
+
+## Архитектура
+
+![архитектура](images/arhitecture.png)
 
 ### Инфраструктура и инструменты
 - **Docker & Docker Compose** — Контейнеризация и оркестрация
